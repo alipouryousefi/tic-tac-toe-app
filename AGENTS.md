@@ -2,12 +2,15 @@
 
 - Mobile Tic-Tac-Toe app using React Native, Expo SDK 58, and strict TypeScript. Prioritize mobile performance and iOS/Android compatibility; preserve existing web support.
 - The game runs entirely on the device. Do not introduce a backend, API, or SQLite database. Keep game state in memory unless persistence is explicitly requested.
-- The repository has a clean home screen and root navigator; game modules have not been created yet.
+- The repository has a welcome/match-setup flow, an empty game page, and a root navigator; gameplay has not been implemented yet.
 
 ## Structure and conventions
 
-- `src/app/`: the home screen (`index.tsx`) and root navigator (`_layout.tsx`). Keep components, hooks, types, and game logic outside this directory.
-- `src/components/`: shared themed UI; `src/hooks/`: theme/color-scheme hooks; `src/constants/`: theme values and font definitions; `assets/fonts/`: local fonts; `assets/branding/`: game icon and splash artwork.
+- `src/app/`: the home screen (`index.tsx`), empty game route (`game.tsx`), and root navigator (`_layout.tsx`). Keep components, hooks, types, and game logic outside this directory.
+- `src/components/welcome/`: welcome UI, match setup, and a centered game-history modal.
+- `src/types/`: all app-specific TypeScript types, grouped by purpose (for example, `welcome.types.ts` and `theme.types.ts`).
+- `src/constants/`: static app data, default settings, labels, styling lookups, theme values, and font definitions.
+- `src/components/`: shared themed UI; `src/hooks/`: theme hooks and the in-memory game-history provider; `assets/fonts/`: local fonts; `assets/branding/`: game icon and splash artwork.
 - Use Expo Router for navigation; import `Link`, `router`, and `useLocalSearchParams` from `expo-router`. Docs: https://docs.expo.dev/router/introduction.md
 - Use the existing aliases: `@/*` maps to `src/*`, and `@/assets/*` maps to `assets/*`.
 - Follow nearby code: kebab-case filenames, two-space indentation, single quotes, semicolons, and separate external/local import groups. Prefer clear names, small functions, immutable updates, and straightforward control flow. Reuse existing components and helpers where they fit.
@@ -15,9 +18,11 @@
 ## Game code and styling
 
 - Keep screens focused on composing components and wiring interactions. Extract reusable UI when it makes a screen easier to read.
-- Keep app-specific types in separate files close to their feature, such as `game.types.ts`.
+- Keep all app-specific type, interface, and enum declarations in `src/types/`, grouped into clearly named files such as `game.types.ts`. Use `import type` for type-only imports.
+- Keep static option arrays, labels, defaults, and shared constant data in `src/constants/`; keep runtime-derived values with their consuming code.
 - Keep move validation, win/draw detection, and next-player rules in a pure module such as `game.logic.ts`, independent of React and React Native. Keep related game files together outside `src/app/` (for example, in a new `src/game/` directory).
 - Use local React state or a reducer. A hook such as `useTicTacToe` (in `use-tic-tac-toe.ts`) may separate state/actions from rendering when useful.
+- Record completed matches through `useGameHistory().recordGame()`. History starts empty and lasts for the current app session; do not add sample results.
 - Use NativeWind `className` for React Native styling; reserve inline styles for runtime values that cannot be expressed with static classes. NativeWind v4 uses Tailwind CSS v3, configured in `tailwind.config.js` and `src/global.css`; the root layout imports the CSS. Keep the `src/` content glob covering all files that contain classes. Docs: https://www.nativewind.dev/llms-full.txt
 - Plus Jakarta Sans is loaded from local assets through `src/constants/fonts.ts` in the root layout. Use `font-sans` with the regular/medium/semibold/bold weights, or the shared `ThemedText` component; its `code` variant keeps a monospaced font.
 

@@ -19,8 +19,6 @@ export const Colors = {
   },
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
-
 export const Fonts = {
   sans: AppFontFamily,
   ...Platform.select({

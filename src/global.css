@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 :root {
+  --color-canvas: 250 251 254;
+  --color-surface: 255 255 255;
+  --color-ink: 24 36 58;
+  --color-muted: 101 113 136;
+  --color-line: 225 232 243;
+  --color-accent: 32 138 239;
+  --color-accent-ink: 19 96 175;
+  --color-action: 19 109 202;
+  --color-accent-soft: 234 244 255;
+  --color-player-o: 213 116 60;
+  --color-warm-soft: 255 239 224;
+  --color-positive: 46 127 103;
   --font-display:
     'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
     Segoe UI Symbol, Noto Color Emoji;
@@ -10,4 +22,20 @@
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: 14 21 34;
+    --color-surface: 24 34 51;
+    --color-ink: 242 246 255;
+    --color-muted: 162 175 197;
+    --color-line: 48 62 83;
+    --color-accent: 83 168 250;
+    --color-accent-ink: 83 168 250;
+    --color-accent-soft: 24 49 77;
+    --color-player-o: 245 176 126;
+    --color-warm-soft: 64 44 33;
+    --color-positive: 119 206 173;
+  }
 }

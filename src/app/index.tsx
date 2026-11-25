@@ -1,10 +1,5 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { WelcomeScreen } from '@/components/welcome';
 
 export default function HomeScreen() {
-  return (
-    <ThemedView className="flex-1 items-center justify-center">
-      <ThemedText type="subtitle">Tic-Tac-Toe</ThemedText>
-    </ThemedView>
-  );
+  return <WelcomeScreen />;
 }
