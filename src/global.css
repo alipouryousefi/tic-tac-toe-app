@@ -24,18 +24,16 @@
   --font-serif: Georgia, 'Times New Roman', serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: 14 21 34;
-    --color-surface: 24 34 51;
-    --color-ink: 242 246 255;
-    --color-muted: 162 175 197;
-    --color-line: 48 62 83;
-    --color-accent: 83 168 250;
-    --color-accent-ink: 83 168 250;
-    --color-accent-soft: 24 49 77;
-    --color-player-o: 245 176 126;
-    --color-warm-soft: 64 44 33;
-    --color-positive: 119 206 173;
-  }
+.dark:root {
+  --color-canvas: 14 21 34;
+  --color-surface: 24 34 51;
+  --color-ink: 242 246 255;
+  --color-muted: 162 175 197;
+  --color-line: 48 62 83;
+  --color-accent: 83 168 250;
+  --color-accent-ink: 83 168 250;
+  --color-accent-soft: 24 49 77;
+  --color-player-o: 245 176 126;
+  --color-warm-soft: 64 44 33;
+  --color-positive: 119 206 173;
 }

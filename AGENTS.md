@@ -24,6 +24,7 @@
 - Use local React state or a reducer. A hook such as `useTicTacToe` (in `use-tic-tac-toe.ts`) may separate state/actions from rendering when useful.
 - Record completed matches through `useGameHistory().recordGame()`. History starts empty and lasts for the current app session; do not add sample results.
 - Use NativeWind `className` for React Native styling; reserve inline styles for runtime values that cannot be expressed with static classes. NativeWind v4 uses Tailwind CSS v3, configured in `tailwind.config.js` and `src/global.css`; the root layout imports the CSS. Keep the `src/` content glob covering all files that contain classes. Docs: https://www.nativewind.dev/llms-full.txt
+- `AppThemeProvider` synchronizes NativeWind, navigation, themed components, and the status bar. Use `useAppTheme()` for the current light/dark mode and toggle; the welcome page has a sun/moon button. Theme selection lasts for the current session. Preserve `darkMode: 'class'` and the `.dark:root` variable overrides.
 - Plus Jakarta Sans is loaded from local assets through `src/constants/fonts.ts` in the root layout. Use `font-sans` with the regular/medium/semibold/bold weights, or the shared `ThemedText` component; its `code` variant keeps a monospaced font.
 
 ## Tooling and checks

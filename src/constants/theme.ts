@@ -52,3 +52,14 @@ export const Spacing = {
   five: 32,
   six: 64,
 } as const;
+
+export const themeToggleOptions = {
+  light: {
+    label: 'Switch to dark theme',
+    icon: { ios: 'moon', android: 'dark_mode', web: 'dark_mode' },
+  },
+  dark: {
+    label: 'Switch to light theme',
+    icon: { ios: 'sun.max', android: 'light_mode', web: 'light_mode' },
+  },
+} as const;

@@ -2,9 +2,10 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { gameHistoryCopy } from '@/constants/game-history.constants';
-import { difficultyLabels, startGameCopy } from '@/constants/welcome.constants';
+import { startGameCopy } from '@/constants/welcome.constants';
 
 import { ModeCard } from './mode-card';
+import { ThemeToggle } from './theme-toggle';
 import { useWelcome } from './use-welcome';
 import { WelcomeHero } from './welcome-hero';
 import { WelcomeModal } from './welcome-modal';
@@ -13,7 +14,6 @@ import { WelcomeText } from './welcome-text';
 export function WelcomeScreen() {
   const insets = useSafeAreaInsets();
   const {
-    savedSetup,
     selectedMode,
     selectMode,
     draft,
@@ -40,6 +40,9 @@ export function WelcomeScreen() {
           paddingRight: insets.right + 24,
         }}>
         <View className="mx-auto w-full max-w-[440px] flex-1">
+          <View className="mb-[8px] items-end">
+            <ThemeToggle />
+          </View>
           <View className="flex-1 justify-center py-[12px]">
             <WelcomeHero />
             <WelcomeText
@@ -80,8 +83,6 @@ export function WelcomeScreen() {
                 onPress={() => selectMode('device')}
               />
             </View>
-
-
             <Pressable
               accessibilityRole="button"
               accessibilityHint={startGameCopy.openHint}

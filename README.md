@@ -26,6 +26,8 @@ Open the project in Expo Go, or use `npm run android`, `npm run ios`, or `npm ru
 
 Use NativeWind `className` for styling and `font-sans` for Plus Jakarta Sans. Keep game state in memory unless persistence is requested.
 
+Use the sun/moon button at the top of the welcome page to switch the whole app between light and dark. It starts with the device theme; a manual selection lasts for the current session.
+
 Game history starts empty and lasts for the current app session. The history list is ready to receive completed matches when gameplay is implemented.
 
 ## Checks

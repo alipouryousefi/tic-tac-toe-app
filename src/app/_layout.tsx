@@ -1,14 +1,14 @@
 import '@/global.css';
 
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
 import { useReducedMotion } from 'react-native-reanimated';
 
 import { AppFonts } from '@/constants/fonts';
 import { gamePageAnimations } from '@/constants/navigation.constants';
+import { AppThemeProvider } from '@/hooks/app-theme-provider';
 import { GameHistoryProvider } from '@/hooks/game-history-provider';
 
 SplashScreen.preventAutoHideAsync();
@@ -16,7 +16,6 @@ SplashScreen.setOptions({ duration: 200, fade: true });
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts(AppFonts);
-  const colorScheme = useColorScheme();
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -30,7 +29,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <AppThemeProvider>
       <GameHistoryProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
@@ -45,6 +44,6 @@ export default function RootLayout() {
           />
         </Stack>
       </GameHistoryProvider>
-    </ThemeProvider>
+    </AppThemeProvider>
   );
 }
