@@ -18,7 +18,7 @@
 - Keep app-specific types in separate files close to their feature, such as `game.types.ts`.
 - Keep move validation, win/draw detection, and next-player rules in a pure module such as `game.logic.ts`, independent of React and React Native. Keep related game files together outside `src/app/` (for example, in a new `src/game/` directory).
 - Use local React state or a reducer. A hook such as `useTicTacToe` (in `use-tic-tac-toe.ts`) may separate state/actions from rendering when useful.
-- Use NativeWind `className` for React Native styling; reserve inline styles for runtime values that cannot be expressed with static classes. The current starter uses `StyleSheet` and has no NativeWind dependency or configuration yet; verify setup before relying on `className` support.
+- Use NativeWind `className` for React Native styling; reserve inline styles for runtime values that cannot be expressed with static classes. NativeWind v4 uses Tailwind CSS v3, configured in `tailwind.config.js` and `src/global.css`; the root layout imports the CSS. Keep the `src/` content glob covering all files that contain classes. Docs: https://www.nativewind.dev/llms-full.txt
 
 ## Tooling and checks
 

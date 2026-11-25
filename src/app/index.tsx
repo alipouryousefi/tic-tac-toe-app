@@ -30,7 +30,7 @@ function getDevMenuHint() {
 
 export default function HomeScreen() {
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1 flex-row justify-center">
       <SafeAreaView style={styles.safeArea}>
         <ThemedView style={styles.heroSection}>
           <AnimatedIcon />
@@ -62,11 +62,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
   safeArea: {
     flex: 1,
     paddingHorizontal: Spacing.four,
