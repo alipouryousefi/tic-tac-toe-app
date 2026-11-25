@@ -2,12 +2,12 @@
 
 - Mobile Tic-Tac-Toe app using React Native, Expo SDK 58, and strict TypeScript. Prioritize mobile performance and iOS/Android compatibility; preserve existing web support.
 - The game runs entirely on the device. Do not introduce a backend, API, or SQLite database. Keep game state in memory unless persistence is explicitly requested.
-- The repository currently contains Expo starter screens; game modules have not been created yet.
+- The repository has a clean home screen and root navigator; game modules have not been created yet.
 
 ## Structure and conventions
 
-- `src/app/`: Expo Router screens (`index.tsx`, `explore.tsx`) and navigator layouts (`_layout.tsx`). Keep components, hooks, types, and game logic outside this directory.
-- `src/components/` (including `ui/`): reusable UI; `src/hooks/`: shared hooks; `src/constants/theme.ts`: theme values; `assets/`: static assets.
+- `src/app/`: the home screen (`index.tsx`) and root navigator (`_layout.tsx`). Keep components, hooks, types, and game logic outside this directory.
+- `src/components/`: shared themed UI; `src/hooks/`: theme/color-scheme hooks; `src/constants/`: theme values and font definitions; `assets/fonts/`: local fonts; `assets/branding/`: game icon and splash artwork.
 - Use Expo Router for navigation; import `Link`, `router`, and `useLocalSearchParams` from `expo-router`. Docs: https://docs.expo.dev/router/introduction.md
 - Use the existing aliases: `@/*` maps to `src/*`, and `@/assets/*` maps to `assets/*`.
 - Follow nearby code: kebab-case filenames, two-space indentation, single quotes, semicolons, and separate external/local import groups. Prefer clear names, small functions, immutable updates, and straightforward control flow. Reuse existing components and helpers where they fit.
@@ -38,7 +38,6 @@ npx expo install --fix     # fix SDK-incompatible versions
 
 - Run lint and typecheck before finishing; report any blockers. ESLint dependencies/configuration are currently absent, so `npm run lint` may offer to install/configure them. Do not accept setup during a task that forbids dependency or configuration changes.
 - No test script or test runner is currently defined in `package.json`.
-- `npm run reset-project` moves or deletes starter files and recreates routes; use only when a reset is requested.
 
 ## Expo and native workflow
 

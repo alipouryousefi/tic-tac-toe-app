@@ -1,0 +1,17 @@
+{
+  "generator": "Built-in image_gen",
+  "outputs": {
+    "icon.png": {
+      "size": [1254, 1254],
+      "mode": "RGB",
+      "prompt": "Use case: logo-brand. Asset type: final production app icon PNG for a mobile Tic-Tac-Toe game. Create an exceptionally clean flat geometric logo on an opaque pure-white square background, edge to edge white, with no rounded-square container or border. Use only the app's existing bright blue #208AEF and white. Logo: a correct 3-by-3 Tic-Tac-Toe board, constructed from exactly two straight vertical blue grid lines and exactly two straight horizontal blue grid lines; all four lines have gently rounded ends and a consistent bold thickness. Place a blue X in the upper-left cell and a hollow blue O in the lower-right cell. The X and O must be completely inside their cells and must not touch the grid. Leave the other seven cells empty white. Clean mathematical geometry, optically balanced, smooth solid blue fills, sharp vector-like antialiased edges. Use no textures whatsoever. Center the complete mark within the central 56 percent of the square, with equal generous white margins on all sides. Straight-on orthographic 2D, perfectly square canvas, preferably 1024x1024. Prioritize excellent legibility at 48px. No text or typography, no game mockup, no perspective, no 3D, no shadows, no glow, no gradients, no distressed/paint/splatter effect, no black outlines, no watermark."
+    },
+    "splash.png": {
+      "size": [1254, 1254],
+      "mode": "RGBA",
+      "reference": "icon.png",
+      "prompt": "Use case: background-extraction. Asset type: production splash mark and Android adaptive foreground PNG. Edit the provided image only: remove the entire white background, including the white inside the O and every empty grid cell, leaving a genuinely transparent background. Preserve the exact blue Tic-Tac-Toe grid, X and O geometry, their relative positions, stroke thickness, clean smooth edges, and bright blue color. Do not add texture or recolor white pixels into blue. Uniformly reduce the entire blue mark slightly and center it on a square transparent canvas, so the total visible blue artwork occupies no more than 56 percent of the canvas width and height, with at least 22 percent fully transparent padding on all four sides. This padding is required for the Android adaptive icon safe zone. Keep crisp solid shapes and antialiased edges. No shadows, glows, fringe, splatter, new elements, text, painted checkerboard, or background rectangle. Output one finished isolated blue logo on actual transparency, preferably a 1024x1024 PNG."
+    }
+  },
+  "notes": "Original generated PNGs are preserved at their source dimensions. Expo generates the required platform icon sizes. The splash mark also supplies the Android adaptive foreground and themed-icon alpha mask."
+}

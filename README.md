@@ -1,56 +1,35 @@
-# Welcome to your Expo app 👋
+# Tic-Tac-Toe
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A clean mobile app foundation using Expo SDK 58, React Native, TypeScript, and NativeWind. The game runs on the device; game rules and state have not been implemented yet.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run
 
 ```bash
-npm run reset-project
+npm ci
+npm start
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Open the project in Expo Go, or use `npm run android`, `npm run ios`, or `npm run web`. To clear Metro's cache, run `npm start -- --clear`.
 
-### Other setup steps
+## Structure
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+- `src/app/index.tsx`: home screen; `_layout.tsx`: root navigation, font loading, and splash handling.
+- `src/components/`: shared themed text and view components.
+- `src/hooks/`: theme and color-scheme hooks.
+- `src/constants/`: theme values and local font definitions.
+- `src/global.css` and `tailwind.config.js`: NativeWind v4 / Tailwind CSS v3 styling.
+- `assets/fonts/`: Plus Jakarta Sans regular, medium, semibold, and bold, with its license.
+- `assets/branding/`: the game's icon, splash artwork, and generation metadata, configured in `app.json`.
 
-## Learn more
+Use NativeWind `className` for styling and `font-sans` for Plus Jakarta Sans. Keep game state in memory unless persistence is requested.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Checks
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm run lint
+npx tsc --noEmit
+```
 
-## Join the community
+ESLint is not configured yet, so the lint command may prompt to install and configure it. No test runner or test script is currently defined.
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The final launcher icon and native splash need an installed app build for verification. Expo Go's launch screen differs from a standalone app; see [Expo's icon and splash guide](https://docs.expo.dev/develop/user-interface/splash-screen-and-app-icon/).
