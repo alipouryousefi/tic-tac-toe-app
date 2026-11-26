@@ -28,5 +28,7 @@ export const welcomeTextTones = {
   accent: 'text-accent',
   'accent-ink': 'text-accent-ink',
   warm: 'text-player-o',
+  positive: 'text-positive',
+  negative: 'text-negative',
   white: 'text-white',
 } as const;

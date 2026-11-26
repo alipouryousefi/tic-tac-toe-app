@@ -18,6 +18,9 @@ module.exports = {
         'player-o': 'rgb(var(--color-player-o) / <alpha-value>)',
         'warm-soft': 'rgb(var(--color-warm-soft) / <alpha-value>)',
         positive: 'rgb(var(--color-positive) / <alpha-value>)',
+        'positive-soft': 'rgb(var(--color-positive-soft) / <alpha-value>)',
+        negative: 'rgb(var(--color-negative) / <alpha-value>)',
+        'negative-soft': 'rgb(var(--color-negative-soft) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans'],

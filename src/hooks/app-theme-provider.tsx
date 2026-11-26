@@ -4,7 +4,7 @@ import {
   colorScheme as nativeWindColorScheme,
   useColorScheme as useNativeWindColorScheme,
 } from 'nativewind';
-import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, use, useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { useColorScheme as useSystemColorScheme } from 'react-native';
 
 import type {
@@ -15,18 +15,26 @@ import type {
 
 const AppThemeContext = createContext<AppThemeContextValue | null>(null);
 
+function subscribeToHydration() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 export function AppThemeProvider({ children }: AppThemeProviderProps) {
   const systemColorScheme = useSystemColorScheme();
   const { colorScheme: nativeColorScheme } = useNativeWindColorScheme();
   const [preferredTheme, setPreferredTheme] = useState<AppColorScheme | null>(null);
-  const [hasHydrated, setHasHydrated] = useState(process.env.EXPO_OS !== 'web');
+  const hasHydrated = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
   const sourceScheme = process.env.EXPO_OS === 'web' ? systemColorScheme : nativeColorScheme;
   const systemTheme = sourceScheme === 'dark' ? 'dark' : 'light';
   const colorScheme = preferredTheme ?? (hasHydrated ? systemTheme : 'light');
-
-  useEffect(() => {
-    setHasHydrated(true);
-  }, []);
 
   useEffect(() => {
     if (!hasHydrated) {

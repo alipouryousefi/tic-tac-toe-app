@@ -4,6 +4,12 @@ export const startGameCopy = {
   buttonLabel: 'Start a game',
   confirmLabel: 'Start game',
   openHint: 'Choose your opponent and mark before starting the game',
+  newGameLabel: 'Start a new game',
+  startingLabel: 'Starting…',
+  loadingLabel: 'Loading saved game…',
+  replacementNote: 'Starting a new game replaces your unfinished game.',
+  resumeLabel: 'Resume game',
+  retryLabel: 'Retry saved game',
 } as const;
 
 export const welcomeModalLayout = {

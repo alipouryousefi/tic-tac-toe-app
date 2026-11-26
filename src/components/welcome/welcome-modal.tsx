@@ -14,6 +14,9 @@ import { MatchSetupForm } from './match-setup-form';
 import { WelcomeText } from './welcome-text';
 
 export function WelcomeModal({
+  busy,
+  error,
+  hasUnfinishedGame,
   modal,
   draft,
   onChange,
@@ -56,8 +59,10 @@ export function WelcomeModal({
         accessibilityRole="button"
         accessibilityLabel={isSetup ? 'Cancel match setup' : gameHistoryCopy.closeLabel}
         onPress={onClose}
+        disabled={busy}
+        accessibilityState={{ disabled: busy }}
         testID="close-welcome-modal"
-        className="h-[48px] w-[48px] shrink-0 items-center justify-center rounded-full bg-canvas active:opacity-60">
+        className="h-[48px] w-[48px] shrink-0 items-center justify-center rounded-full bg-canvas active:opacity-60 disabled:opacity-50">
         <CloseIcon />
       </Pressable>
     </View>
@@ -65,13 +70,25 @@ export function WelcomeModal({
 
   const footer = (
     <View className="mt-auto gap-3 border-t border-line px-6 pb-6 pt-4">
+      {isSetup && hasUnfinishedGame && (
+        <WelcomeText tone="muted" className="text-center text-[11px] leading-[18px]">
+          {startGameCopy.replacementNote}
+        </WelcomeText>
+      )}
+      {isSetup && error && (
+        <WelcomeText accessibilityRole="alert" className="text-center text-[12px] leading-[20px]">
+          {error}
+        </WelcomeText>
+      )}
       <Pressable
         accessibilityRole="button"
         onPress={isSetup ? onStart : onClose}
+        disabled={busy}
+        accessibilityState={{ disabled: busy, busy }}
         testID={isSetup ? 'confirm-start-game' : 'dismiss-game-history'}
-        className="min-h-[54px] items-center justify-center rounded-[18px] bg-action px-5 py-4 active:opacity-75">
+        className="min-h-[54px] items-center justify-center rounded-[18px] bg-action px-5 py-4 active:opacity-75 disabled:opacity-50">
         <WelcomeText tone="white" className="text-[15px] font-semibold">
-          {isSetup ? startGameCopy.confirmLabel : gameHistoryCopy.doneLabel}
+          {isSetup ? busy ? startGameCopy.startingLabel : startGameCopy.confirmLabel : gameHistoryCopy.doneLabel}
         </WelcomeText>
       </Pressable>
     </View>
@@ -100,6 +117,7 @@ export function WelcomeModal({
           focusable={false}
           importantForAccessibility="no-hide-descendants"
           onPress={onClose}
+          disabled={busy}
           testID="dismiss-welcome-modal-backdrop"
           className="absolute inset-0 bg-black/60"
         />
@@ -115,7 +133,7 @@ export function WelcomeModal({
               contentContainerClassName="grow"
               contentInsetAdjustmentBehavior="never">
               {header}
-              <MatchSetupForm draft={draft} onChange={onChange} />
+              <MatchSetupForm draft={draft} onChange={onChange} busy={busy} />
               {footer}
             </ScrollView>
           ) : (

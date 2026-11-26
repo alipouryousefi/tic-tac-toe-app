@@ -1,5 +1,5 @@
-import { View } from 'react-native';
+import { GamePage } from '@/components/game';
 
 export default function GameScreen() {
-  return <View className="flex-1 bg-canvas" testID="game-screen" />;
+  return <GamePage />;
 }

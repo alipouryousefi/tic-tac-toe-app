@@ -10,6 +10,7 @@ import { AppFonts } from '@/constants/fonts';
 import { gamePageAnimations } from '@/constants/navigation.constants';
 import { AppThemeProvider } from '@/hooks/app-theme-provider';
 import { GameHistoryProvider } from '@/hooks/game-history-provider';
+import { GameSessionProvider } from '@/hooks/game-session-provider';
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({ duration: 200, fade: true });
@@ -31,18 +32,20 @@ export default function RootLayout() {
   return (
     <AppThemeProvider>
       <GameHistoryProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen
-            name="game"
-            options={{
-              animation: reducedMotion
-                ? gamePageAnimations.reducedMotion
-                : gamePageAnimations.standard,
-              animationMatchesGesture: true,
-            }}
-          />
-        </Stack>
+        <GameSessionProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen
+              name="game"
+              options={{
+                animation: reducedMotion
+                  ? gamePageAnimations.reducedMotion
+                  : gamePageAnimations.standard,
+                animationMatchesGesture: true,
+              }}
+            />
+          </Stack>
+        </GameSessionProvider>
       </GameHistoryProvider>
     </AppThemeProvider>
   );

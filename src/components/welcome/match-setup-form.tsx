@@ -11,7 +11,7 @@ import type { MatchSetupFormProps } from '@/types/welcome.types';
 import { GameMark } from './game-mark';
 import { WelcomeText } from './welcome-text';
 
-export function MatchSetupForm({ draft, onChange }: MatchSetupFormProps) {
+export function MatchSetupForm({ draft, onChange, busy }: MatchSetupFormProps) {
   const firstPlayer = draft.mark === 'X' ? 'You make the first move.' :
     draft.mode === 'friend' ? 'Your friend makes the first move.' : 'The device makes the first move.';
 
@@ -26,7 +26,8 @@ export function MatchSetupForm({ draft, onChange }: MatchSetupFormProps) {
             <Pressable
               key={mode.value}
               accessibilityRole="radio"
-              accessibilityState={{ checked: selected }}
+              accessibilityState={{ checked: selected, disabled: busy }}
+              disabled={busy}
               accessibilityLabel={`${mode.title}. ${mode.description}`}
               onPress={() => onChange({ ...draft, mode: mode.value })}
               testID={`setup-mode-${mode.value}`}
@@ -54,7 +55,8 @@ export function MatchSetupForm({ draft, onChange }: MatchSetupFormProps) {
               key={mark}
               accessibilityRole="radio"
               accessibilityLabel={`Play as ${mark}`}
-              accessibilityState={{ checked: draft.mark === mark }}
+              accessibilityState={{ checked: draft.mark === mark, disabled: busy }}
+              disabled={busy}
               onPress={() => onChange({ ...draft, mark })}
               testID={`setup-mark-${mark.toLowerCase()}`}
               className={`min-h-[92px] flex-1 items-center justify-center gap-2 rounded-[20px] border py-4 active:opacity-70 ${draft.mark === mark ? 'border-accent bg-accent-soft' : 'border-line bg-surface'}`}>
@@ -74,7 +76,8 @@ export function MatchSetupForm({ draft, onChange }: MatchSetupFormProps) {
                 key={difficulty}
                 accessibilityRole="radio"
                 accessibilityLabel={`${difficultyLabels[difficulty]} difficulty`}
-                accessibilityState={{ checked: draft.difficulty === difficulty }}
+                accessibilityState={{ checked: draft.difficulty === difficulty, disabled: busy }}
+                disabled={busy}
                 onPress={() => onChange({ ...draft, difficulty })}
                 testID={`setup-difficulty-${difficulty}`}
                 className={`min-h-[48px] grow items-center justify-center rounded-[16px] border px-4 py-3 active:opacity-70 ${draft.difficulty === difficulty ? 'border-accent bg-accent-soft' : 'border-line bg-surface'}`}>

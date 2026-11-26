@@ -24,6 +24,14 @@ export function WelcomeScreen() {
     updateDraft,
     startGame,
     onModalDismiss,
+    canResume,
+    resumeDescription,
+    resumeGame,
+    isLoading,
+    isStarting,
+    isBusy,
+    error,
+    reloadSession,
   } = useWelcome();
 
   return (
@@ -83,16 +91,48 @@ export function WelcomeScreen() {
                 onPress={() => selectMode('device')}
               />
             </View>
+            {error && modal === null && (
+              <View className="mt-4 gap-2 rounded-[16px] border border-player-o/30 bg-warm-soft p-4">
+                <WelcomeText accessibilityRole="alert" className="text-[12px] leading-[20px]">
+                  {error}
+                </WelcomeText>
+                <Pressable
+                  accessibilityRole="button"
+                  disabled={isBusy}
+                  onPress={() => void reloadSession()}
+                  className="min-h-[48px] items-center justify-center rounded-[12px] bg-surface px-3 py-2 disabled:opacity-50">
+                  <WelcomeText className="text-[12px] font-semibold">{startGameCopy.retryLabel}</WelcomeText>
+                </Pressable>
+              </View>
+            )}
+            {canResume && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ disabled: isBusy }}
+                disabled={isBusy}
+                onPress={resumeGame}
+                testID="resume-game"
+                className="mt-[20px] min-h-[64px] items-center justify-center gap-1 rounded-[18px] bg-action px-6 py-4 active:opacity-75 disabled:opacity-50">
+                <WelcomeText tone="white" className="text-[15px] font-semibold">
+                  {startGameCopy.resumeLabel}
+                </WelcomeText>
+                <WelcomeText tone="white" className="text-[11px] leading-[18px]">
+                  {resumeDescription}
+                </WelcomeText>
+              </Pressable>
+            )}
             <Pressable
               accessibilityRole="button"
               accessibilityHint={startGameCopy.openHint}
               onPress={openSetup}
+              disabled={isBusy}
+              accessibilityState={{ disabled: isBusy, busy: isLoading }}
               testID="open-match-setup"
-              className="mt-[20px] min-h-[56px] flex-row items-center justify-center gap-[14px] rounded-[18px] bg-action px-[24px] py-[16px] active:opacity-75">
-              <WelcomeText tone="white" className="text-[15px] font-semibold leading-[22px]">
-                {startGameCopy.buttonLabel}
+              className={`mt-[20px] min-h-[56px] flex-row items-center justify-center gap-[14px] rounded-[18px] border px-[24px] py-[16px] active:opacity-75 disabled:opacity-50 ${canResume ? 'border-line bg-surface' : 'border-action bg-action'}`}>
+              <WelcomeText tone={canResume ? 'ink' : 'white'} className="text-[15px] font-semibold leading-[22px]">
+                {isLoading ? startGameCopy.loadingLabel : canResume ? startGameCopy.newGameLabel : startGameCopy.buttonLabel}
               </WelcomeText>
-              <WelcomeText tone="white" accessible={false} className="text-[23px] leading-[24px]">
+              <WelcomeText tone={canResume ? 'ink' : 'white'} accessible={false} className="text-[23px] leading-[24px]">
                 →
               </WelcomeText>
             </Pressable>
@@ -110,6 +150,9 @@ export function WelcomeScreen() {
         </View>
       </ScrollView>
       <WelcomeModal
+        busy={isStarting}
+        error={error}
+        hasUnfinishedGame={canResume}
         modal={modal}
         draft={draft}
         onChange={updateDraft}

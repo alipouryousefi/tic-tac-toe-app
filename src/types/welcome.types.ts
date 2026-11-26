@@ -12,7 +12,7 @@ export type MatchSetup = {
 };
 
 export type WelcomeTextProps = TextProps & {
-  tone?: 'ink' | 'muted' | 'accent' | 'accent-ink' | 'warm' | 'white';
+  tone?: 'ink' | 'muted' | 'accent' | 'accent-ink' | 'warm' | 'positive' | 'negative' | 'white';
 };
 
 export type GameMarkProps = {
@@ -28,6 +28,9 @@ export type ModeCardProps = {
 };
 
 export type WelcomeModalProps = {
+  busy: boolean;
+  error: string | null;
+  hasUnfinishedGame: boolean;
   modal: WelcomeModalKind;
   draft: MatchSetup;
   onChange: (setup: MatchSetup) => void;
@@ -36,4 +39,4 @@ export type WelcomeModalProps = {
   onDismiss: () => void;
 };
 
-export type MatchSetupFormProps = Pick<WelcomeModalProps, 'draft' | 'onChange'>;
+export type MatchSetupFormProps = Pick<WelcomeModalProps, 'draft' | 'onChange' | 'busy'>;

@@ -1,4 +1,4 @@
-import { createContext, use, useCallback, useMemo, useRef, useState } from 'react';
+import { createContext, use, useCallback, useMemo, useState } from 'react';
 
 import type {
   CompletedGame,
@@ -11,18 +11,21 @@ const GameHistoryContext = createContext<GameHistoryContextValue | null>(null);
 
 export function GameHistoryProvider({ children }: GameHistoryProviderProps) {
   const [games, setGames] = useState<readonly GameHistoryEntry[]>([]);
-  const nextId = useRef(0);
 
   const recordGame = useCallback((game: CompletedGame) => {
     const entry: GameHistoryEntry = {
       ...game,
       setup: { ...game.setup },
-      id: `game-${nextId.current++}`,
+      id: game.sessionId,
     };
 
-    setGames((current) =>
-      [entry, ...current].sort((first, second) => second.completedAt - first.completedAt),
-    );
+    setGames((current) => {
+      if (current.some((existing) => existing.id === entry.id)) {
+        return current;
+      }
+
+      return [entry, ...current].sort((first, second) => second.completedAt - first.completedAt);
+    });
   }, []);
 
   const value = useMemo(() => ({ games, recordGame }), [games, recordGame]);

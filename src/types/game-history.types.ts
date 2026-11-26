@@ -3,6 +3,7 @@ import type { ReactElement, ReactNode } from 'react';
 import type { MatchSetup, PlayerMark } from '@/types/welcome.types';
 
 export type CompletedGame = Readonly<{
+  sessionId: string;
   setup: Readonly<MatchSetup>;
   winner: PlayerMark | null;
   completedAt: number;

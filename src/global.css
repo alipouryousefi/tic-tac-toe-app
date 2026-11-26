@@ -15,6 +15,9 @@
   --color-player-o: 213 116 60;
   --color-warm-soft: 255 239 224;
   --color-positive: 46 127 103;
+  --color-positive-soft: 229 246 237;
+  --color-negative: 185 55 65;
+  --color-negative-soft: 254 235 238;
   --font-display:
     'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
     Segoe UI Symbol, Noto Color Emoji;
@@ -36,4 +39,7 @@
   --color-player-o: 245 176 126;
   --color-warm-soft: 64 44 33;
   --color-positive: 119 206 173;
+  --color-positive-soft: 25 57 47;
+  --color-negative: 255 153 163;
+  --color-negative-soft: 65 34 44;
 }
