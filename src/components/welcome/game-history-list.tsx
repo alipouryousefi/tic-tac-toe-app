@@ -19,7 +19,7 @@ function getResultLabel({ winner, setup }: GameHistoryEntry) {
   return winner === setup.mark ? gameHistoryCopy.results.win : gameHistoryCopy.results.loss;
 }
 
-export function GameHistoryList({ games, isLoading, error, onRetry, header, footer }: GameHistoryListProps) {
+export function GameHistoryList({ games, isLoading, error, onRetry }: GameHistoryListProps) {
   return (
     <View className="min-h-0 flex-1">
       <FlatList
@@ -29,29 +29,24 @@ export function GameHistoryList({ games, isLoading, error, onRetry, header, foot
         accessibilityState={{ busy: isLoading }}
         data={games}
         keyExtractor={(game) => game.id}
-        ListHeaderComponent={
-          <>
-            {header}
-            {error && (
-              <View className="gap-3 px-6 py-5">
-                <WelcomeText accessibilityRole="alert" className="text-center text-[13px] leading-[22px]">
-                  {error}
-                </WelcomeText>
-                <Pressable
-                  accessibilityRole="button"
-                  disabled={isLoading}
-                  accessibilityState={{ disabled: isLoading }}
-                  onPress={onRetry}
-                  testID="retry-load-history"
-                  className="min-h-[44px] items-center justify-center rounded-[14px] bg-accent-soft px-4 active:opacity-70 disabled:opacity-50">
-                  <WelcomeText tone="accent-ink" className="text-[13px] font-semibold">
-                    {gameHistoryCopy.retryLabel}
-                  </WelcomeText>
-                </Pressable>
-              </View>
-            )}
-          </>
-        }
+        ListHeaderComponent={error ? (
+          <View className="gap-3 px-6 py-5">
+            <WelcomeText accessibilityRole="alert" className="text-center text-[13px] leading-[22px]">
+              {error}
+            </WelcomeText>
+            <Pressable
+              accessibilityRole="button"
+              disabled={isLoading}
+              accessibilityState={{ disabled: isLoading }}
+              onPress={onRetry}
+              testID="retry-load-history"
+              className="min-h-[44px] items-center justify-center rounded-[14px] bg-accent-soft px-4 active:opacity-70 disabled:opacity-50">
+              <WelcomeText tone="accent-ink" className="text-[13px] font-semibold">
+                {gameHistoryCopy.retryLabel}
+              </WelcomeText>
+            </Pressable>
+          </View>
+        ) : undefined}
         testID="game-history-list"
         ListEmptyComponent={isLoading ? (
           <View className="min-h-[260px] items-center justify-center px-6 py-10" testID="loading-game-history">
@@ -104,7 +99,6 @@ export function GameHistoryList({ games, isLoading, error, onRetry, header, foot
           );
         }}
       />
-      {footer}
     </View>
   );
 }

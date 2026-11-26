@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import type { MatchSetup, PlayerMark } from '@/types/welcome.types';
 
@@ -28,6 +28,4 @@ export type GameHistoryListProps = {
   isLoading: boolean;
   error: string | null;
   onRetry: () => void;
-  header: ReactElement;
-  footer: ReactElement;
 };

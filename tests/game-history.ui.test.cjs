@@ -49,8 +49,6 @@ function renderHistory(overrides = {}) {
     isLoading: false,
     error: null,
     onRetry() {},
-    header: React.createElement(nativeWeb.Text, { testID: 'history-heading' }, 'Game history'),
-    footer: React.createElement(nativeWeb.Text, { testID: 'history-footer' }, 'Done'),
     ...overrides,
   }));
 }
@@ -79,8 +77,6 @@ test('a successfully loaded empty history explains where the last five results w
   assert.ok(html.includes('data-testid="empty-game-history"'));
   assert.ok(html.includes(gameHistoryCopy.emptyTitle));
   assert.ok(html.includes(gameHistoryCopy.emptyDescription));
-  assert.ok(html.includes('data-testid="history-heading"'));
-  assert.ok(html.includes('data-testid="history-footer"'));
   assert.ok(!html.includes('data-testid="loading-game-history"'));
 });
 

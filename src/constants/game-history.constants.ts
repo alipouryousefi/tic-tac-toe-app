@@ -5,7 +5,6 @@ export const gameHistoryCopy = {
   kicker: 'YOUR RECENT ROUNDS',
   openHint: 'View your last five completed games',
   closeLabel: 'Close game history',
-  doneLabel: 'Done',
   emptyTitle: 'No games yet',
   emptyDescription: 'Your last five completed games will appear here.',
   loading: 'Loading your recent games…',

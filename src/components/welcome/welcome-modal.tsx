@@ -44,7 +44,7 @@ export function WelcomeModal({
   );
 
   const header = (
-    <View className="flex-row items-center justify-between gap-3 border-b border-line px-6 pb-4 pt-5">
+    <View className="shrink-0 flex-row items-center justify-between gap-3 border-b border-line px-6 pb-4 pt-5">
       <View className="flex-1 gap-1">
         <WelcomeText tone="accent-ink" className="text-[10px] font-bold tracking-[2px]">
           {isSetup ? 'A FEW LITTLE CHOICES' : gameHistoryCopy.kicker}
@@ -66,27 +66,27 @@ export function WelcomeModal({
     </View>
   );
 
-  const footer = (
+  const setupFooter = (
     <View className="mt-auto gap-3 border-t border-line px-6 pb-6 pt-4">
-      {isSetup && hasUnfinishedGame && (
+      {hasUnfinishedGame && (
         <WelcomeText tone="muted" className="text-center text-[11px] leading-[18px]">
           {startGameCopy.replacementNote}
         </WelcomeText>
       )}
-      {isSetup && error && (
+      {error && (
         <WelcomeText accessibilityRole="alert" className="text-center text-[12px] leading-[20px]">
           {error}
         </WelcomeText>
       )}
       <Pressable
         accessibilityRole="button"
-        onPress={isSetup ? onStart : onClose}
+        onPress={onStart}
         disabled={busy}
         accessibilityState={{ disabled: busy, busy }}
-        testID={isSetup ? 'confirm-start-game' : 'dismiss-game-history'}
+        testID="confirm-start-game"
         className="min-h-[54px] items-center justify-center rounded-[18px] bg-action px-5 py-4 active:opacity-75 disabled:opacity-50">
         <WelcomeText tone="white" className="text-[15px] font-semibold">
-          {isSetup ? busy ? startGameCopy.startingLabel : startGameCopy.confirmLabel : gameHistoryCopy.doneLabel}
+          {busy ? startGameCopy.startingLabel : startGameCopy.confirmLabel}
         </WelcomeText>
       </Pressable>
     </View>
@@ -126,17 +126,18 @@ export function WelcomeModal({
               contentInsetAdjustmentBehavior="never">
               {header}
               <MatchSetupForm draft={draft} onChange={onChange} busy={busy} />
-              {footer}
+              {setupFooter}
             </ScrollView>
           ) : (
-            <GameHistoryList
-              games={games}
-              isLoading={isLoading}
-              error={historyError}
-              onRetry={() => void reloadHistory()}
-              header={header}
-              footer={footer}
-            />
+            <>
+              {header}
+              <GameHistoryList
+                games={games}
+                isLoading={isLoading}
+                error={historyError}
+                onRetry={() => void reloadHistory()}
+              />
+            </>
           )}
         </View>
       </View>
