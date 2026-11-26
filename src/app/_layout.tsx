@@ -42,7 +42,7 @@ export default function RootLayout() {
                   ? gamePageAnimations.reducedMotion
                   : gamePageAnimations.standard,
                 animationDuration: gamePageAnimations.duration,
-                animationMatchesGesture: true,
+                fullScreenGestureEnabled: false,
               }}
             />
           </Stack>
