@@ -1,12 +1,12 @@
 import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { gameSessionMessages } from '@/constants/game-session.constants';
+import { getCompletedGame } from '@/game/game-history.logic';
 import {
   applyMove,
   createGameSession,
   getCurrentPlayer,
   getDeviceMove,
-  getGameOutcome,
 } from '@/game/game.logic';
 import { loadGameSession, saveGameSession } from '@/game/session.storage';
 import { useGameHistory } from '@/hooks/game-history-provider';
@@ -102,15 +102,10 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
 
       if (isMounted.current) {
         setSession(next);
-        const outcome = getGameOutcome(next.board);
+        const completedGame = getCompletedGame(next);
 
-        if (outcome.status !== 'playing') {
-          recordGame({
-            sessionId: next.id,
-            setup: next.setup,
-            winner: outcome.winner,
-            completedAt: next.updatedAt,
-          });
+        if (completedGame) {
+          recordGame(completedGame);
         }
       }
 

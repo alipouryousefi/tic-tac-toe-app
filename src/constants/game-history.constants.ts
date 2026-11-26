@@ -1,11 +1,16 @@
+export const gameHistoryLimit = 5;
+
 export const gameHistoryCopy = {
   title: 'Game history',
   kicker: 'YOUR RECENT ROUNDS',
-  openHint: 'View your completed games',
+  openHint: 'View your last five completed games',
   closeLabel: 'Close game history',
   doneLabel: 'Done',
   emptyTitle: 'No games yet',
-  emptyDescription: 'Your completed games will appear here.',
+  emptyDescription: 'Your last five completed games will appear here.',
+  loading: 'Loading your recent games…',
+  loadFailed: 'Your game history could not be loaded. Try again.',
+  retryLabel: 'Try again',
   playedAs: 'Played as',
   opponents: {
     friend: 'With a friend',

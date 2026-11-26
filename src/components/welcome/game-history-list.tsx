@@ -1,4 +1,4 @@
-import { FlatList, View } from 'react-native';
+import { FlatList, Pressable, View } from 'react-native';
 
 import { gameHistoryCopy, gameHistoryDateOptions } from '@/constants/game-history.constants';
 import { difficultyLabels } from '@/constants/welcome.constants';
@@ -19,18 +19,47 @@ function getResultLabel({ winner, setup }: GameHistoryEntry) {
   return winner === setup.mark ? gameHistoryCopy.results.win : gameHistoryCopy.results.loss;
 }
 
-export function GameHistoryList({ games, header, footer }: GameHistoryListProps) {
+export function GameHistoryList({ games, isLoading, error, onRetry, header, footer }: GameHistoryListProps) {
   return (
     <View className="min-h-0 flex-1">
       <FlatList
         className="min-h-0 flex-1"
         contentContainerClassName="grow"
         contentInsetAdjustmentBehavior="never"
+        accessibilityState={{ busy: isLoading }}
         data={games}
         keyExtractor={(game) => game.id}
-        ListHeaderComponent={header}
+        ListHeaderComponent={
+          <>
+            {header}
+            {error && (
+              <View className="gap-3 px-6 py-5">
+                <WelcomeText accessibilityRole="alert" className="text-center text-[13px] leading-[22px]">
+                  {error}
+                </WelcomeText>
+                <Pressable
+                  accessibilityRole="button"
+                  disabled={isLoading}
+                  accessibilityState={{ disabled: isLoading }}
+                  onPress={onRetry}
+                  testID="retry-load-history"
+                  className="min-h-[44px] items-center justify-center rounded-[14px] bg-accent-soft px-4 active:opacity-70 disabled:opacity-50">
+                  <WelcomeText tone="accent-ink" className="text-[13px] font-semibold">
+                    {gameHistoryCopy.retryLabel}
+                  </WelcomeText>
+                </Pressable>
+              </View>
+            )}
+          </>
+        }
         testID="game-history-list"
-        ListEmptyComponent={
+        ListEmptyComponent={isLoading ? (
+          <View className="min-h-[260px] items-center justify-center px-6 py-10" testID="loading-game-history">
+            <WelcomeText tone="muted" className="text-center text-[13px] leading-[22px]">
+              {gameHistoryCopy.loading}
+            </WelcomeText>
+          </View>
+        ) : error ? undefined : (
           <View className="min-h-[260px] items-center justify-center px-6 py-10" testID="empty-game-history">
             <View className="mb-5 flex-row items-center gap-3 rounded-[24px] bg-accent-soft p-5">
               <GameMark mark="X" size="small" />
@@ -43,7 +72,7 @@ export function GameHistoryList({ games, header, footer }: GameHistoryListProps)
               {gameHistoryCopy.emptyDescription}
             </WelcomeText>
           </View>
-        }
+        )}
         renderItem={({ item: game }) => {
           const result = getResultLabel(game);
 

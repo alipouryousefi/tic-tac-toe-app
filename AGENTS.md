@@ -1,7 +1,7 @@
 # Project
 
 - Mobile Tic-Tac-Toe app using React Native, Expo SDK 58, and strict TypeScript. Prioritize mobile performance and iOS/Android compatibility; preserve existing web support.
-- The game runs entirely on the device, with no backend or API. Persist exactly one current game session with Expo SQLite on iOS/Android and IndexedDB on web. Completed-game history and theme preferences remain in memory.
+- The game runs entirely on the device, with no backend or API. Persist one current game session and the five most recent completed games with Expo SQLite on iOS/Android and IndexedDB on web. Theme preferences remain in memory.
 - The app has a welcome/setup flow, friend and device gameplay, restart, and saved-session resume.
 
 ## Structure and conventions
@@ -24,7 +24,7 @@
 - Keep static option arrays, labels, defaults, and shared constant data in `src/constants/`; keep runtime-derived values with their consuming code.
 - Keep move validation, win/draw detection, and next-player rules in a pure module such as `game.logic.ts`, independent of React and React Native. Keep related game files together outside `src/app/` (for example, in a new `src/game/` directory).
 - Use local React state or a reducer. A hook such as `useTicTacToe` (in `use-tic-tac-toe.ts`) may separate state/actions from rendering when useful.
-- Record completed matches through `useGameHistory().recordGame()`. History starts empty and lasts for the current app session; do not add sample results.
+- Session storage commits a completed match and its final board atomically. Update the visible history through `useGameHistory().recordGame()` after that commit. Restore history on startup, deduplicate by session ID, and keep only the five newest results; do not add sample results.
 - `GameSessionProvider` restores on startup and commits each move before updating the visible board. Use its actions for start, moves, and restart; never bypass validation or persistence. Resume only unfinished sessions. Reject stale AI callbacks after a restart, and pause device moves when the screen/app is inactive.
 - Use NativeWind `className` for React Native styling; reserve inline styles for runtime values that cannot be expressed with static classes. NativeWind v4 uses Tailwind CSS v3, configured in `tailwind.config.js` and `src/global.css`; the root layout imports the CSS. Keep the `src/` content glob covering all files that contain classes. Docs: https://www.nativewind.dev/llms-full.txt
 - `AppThemeProvider` synchronizes NativeWind, navigation, themed components, and the status bar. Use `useAppTheme()` for the current light/dark mode and toggle; the welcome page has a sun/moon button. Theme selection lasts for the current session. Preserve `darkMode: 'class'` and the `.dark:root` variable overrides.

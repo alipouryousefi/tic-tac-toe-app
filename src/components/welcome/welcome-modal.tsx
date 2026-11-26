@@ -25,7 +25,7 @@ export function WelcomeModal({
 }: WelcomeModalProps) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const { games } = useGameHistory();
+  const { games, isLoading, error: historyError, reloadHistory } = useGameHistory();
   const [displayedModal, setDisplayedModal] = useState(modal ?? 'history');
 
   // Keep the selected dialog content stable during its exit animation.
@@ -129,7 +129,14 @@ export function WelcomeModal({
               {footer}
             </ScrollView>
           ) : (
-            <GameHistoryList games={games} header={header} footer={footer} />
+            <GameHistoryList
+              games={games}
+              isLoading={isLoading}
+              error={historyError}
+              onRetry={() => void reloadHistory()}
+              header={header}
+              footer={footer}
+            />
           )}
         </View>
       </View>

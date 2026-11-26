@@ -1,5 +1,8 @@
-import { createContext, use, useCallback, useMemo, useState } from 'react';
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { gameHistoryCopy } from '@/constants/game-history.constants';
+import { createGameHistoryEntry, mergeGameHistory } from '@/game/game-history.logic';
+import { loadGameHistory } from '@/game/session.storage';
 import type {
   CompletedGame,
   GameHistoryContextValue,
@@ -11,24 +14,59 @@ const GameHistoryContext = createContext<GameHistoryContextValue | null>(null);
 
 export function GameHistoryProvider({ children }: GameHistoryProviderProps) {
   const [games, setGames] = useState<readonly GameHistoryEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const isMounted = useRef(false);
+  const loadRevision = useRef(0);
 
-  const recordGame = useCallback((game: CompletedGame) => {
-    const entry: GameHistoryEntry = {
-      ...game,
-      setup: { ...game.setup },
-      id: game.sessionId,
-    };
+  const restoreHistory = useCallback(() => {
+    const revision = ++loadRevision.current;
 
-    setGames((current) => {
-      if (current.some((existing) => existing.id === entry.id)) {
-        return current;
+    return loadGameHistory().then((saved) => {
+      if (isMounted.current && revision === loadRevision.current) {
+        // A round may finish while the initial history read is still in flight.
+        setGames((current) => mergeGameHistory(current, saved));
       }
-
-      return [entry, ...current].sort((first, second) => second.completedAt - first.completedAt);
+    }, () => {
+      if (isMounted.current && revision === loadRevision.current) {
+        setError(gameHistoryCopy.loadFailed);
+      }
+    }).finally(() => {
+      if (isMounted.current && revision === loadRevision.current) {
+        setIsLoading(false);
+      }
     });
   }, []);
 
-  const value = useMemo(() => ({ games, recordGame }), [games, recordGame]);
+  const reloadHistory = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
+    return restoreHistory();
+  }, [restoreHistory]);
+
+  useEffect(() => {
+    isMounted.current = true;
+    void restoreHistory();
+
+    return () => {
+      isMounted.current = false;
+      loadRevision.current += 1;
+    };
+  }, [restoreHistory]);
+
+  const recordGame = useCallback((game: CompletedGame) => {
+    // Session storage has already committed this result with the final move.
+    const entry = createGameHistoryEntry(game);
+    setGames((current) => mergeGameHistory([entry], current));
+  }, []);
+
+  const value = useMemo(() => ({
+    games,
+    recordGame,
+    isLoading,
+    error,
+    reloadHistory,
+  }), [games, recordGame, isLoading, error, reloadHistory]);
 
   return <GameHistoryContext value={value}>{children}</GameHistoryContext>;
 }

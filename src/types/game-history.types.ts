@@ -14,6 +14,9 @@ export type GameHistoryEntry = Readonly<CompletedGame & { id: string }>;
 export type GameHistoryContextValue = {
   games: readonly GameHistoryEntry[];
   recordGame: (game: CompletedGame) => void;
+  isLoading: boolean;
+  error: string | null;
+  reloadHistory: () => Promise<void>;
 };
 
 export type GameHistoryProviderProps = {
@@ -22,6 +25,9 @@ export type GameHistoryProviderProps = {
 
 export type GameHistoryListProps = {
   games: readonly GameHistoryEntry[];
+  isLoading: boolean;
+  error: string | null;
+  onRetry: () => void;
   header: ReactElement;
   footer: ReactElement;
 };

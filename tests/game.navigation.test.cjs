@@ -7,6 +7,30 @@ const { renderToStaticMarkup } = require('react-dom/server');
 
 let currentGame;
 let navigationCalls = [];
+let stateWrites = [];
+let events = [];
+let effects = [];
+let blurListeners = [];
+
+const navigation = {
+  addListener: (name, callback) => {
+    const listener = { name, callback, active: true };
+    blurListeners.push(listener);
+    return () => { listener.active = false; };
+  },
+};
+
+function recordNavigation(method, args) {
+  const event = { method, args };
+  navigationCalls.push(event);
+  events.push(event);
+}
+
+function emitBlur() {
+  for (const listener of blurListeners) {
+    if (listener.active && listener.name === 'blur') listener.callback();
+  }
+}
 
 function loadHooks() {
   const previousLoad = Module._load;
@@ -14,11 +38,28 @@ function loadHooks() {
   const sourceDirectory = path.resolve(path.dirname(module.filename), '../src') + path.sep;
 
   Module._load = function (request, parent, isMain) {
+    if (request === 'react') {
+      return {
+        ...React,
+        useState: (initial) => {
+          const [value, setValue] = React.useState(initial);
+          return [value, (next) => {
+            stateWrites.push(next);
+            events.push({ method: 'state', value: next });
+            setValue(next);
+          }];
+        },
+        useEffect: (effect) => {
+          effects.push(effect);
+        },
+      };
+    }
     if (request === 'expo-router') {
       return {
+        useNavigation: () => navigation,
         router: {
-          navigate: (...args) => navigationCalls.push({ method: 'navigate', args }),
-          dismissTo: (...args) => navigationCalls.push({ method: 'dismissTo', args }),
+          navigate: (...args) => recordNavigation('navigate', args),
+          dismissTo: (...args) => recordNavigation('dismissTo', args),
         },
       };
     }
@@ -59,6 +100,7 @@ function captureHook(useHook, overrides = {}, openSetup = false) {
   let captured;
 
   function Capture() {
+    effects = [];
     const state = useHook();
     // A render-phase update lets the real hook finish opening setup before capture.
     if (openSetup && state.modal === null) state.openSetup();
@@ -67,14 +109,22 @@ function captureHook(useHook, overrides = {}, openSetup = false) {
   }
 
   renderToStaticMarkup(React.createElement(Capture));
+  // Server rendering does not run effects; attach the latest committed blur listener.
+  for (const effect of effects) effect();
+  stateWrites = [];
+  events = [];
   return captured;
 }
 
 test.beforeEach(() => {
   navigationCalls = [];
+  stateWrites = [];
+  events = [];
+  effects = [];
+  blurListeners = [];
 });
 
-test('Start navigates directly once the new game is durably saved', async () => {
+test('Start saves and navigates before clearing setup on blur', async () => {
   let finishSave;
   const save = new Promise((resolve) => { finishSave = resolve; });
   const setups = [];
@@ -97,9 +147,24 @@ test('Start navigates directly once the new game is durably saved', async () => 
     method: 'navigate',
     args: [{ pathname: '/game', params: setups[0] }],
   }]);
+  assert.ok(!stateWrites.includes(null), 'Setup must remain open when navigation starts');
+  assert.ok(!stateWrites.includes(false), 'Setup stays busy until the route blurs');
 
   await welcome.startGame();
+  welcome.closeModal();
+  assert.equal(setups.length, 1, 'Start remains locked while navigation awaits blur');
   assert.equal(navigationCalls.length, 1, 'An outgoing setup cannot navigate twice');
+  assert.ok(!stateWrites.includes(null), 'Dismissal cannot run ahead of navigation');
+
+  emitBlur();
+  const navigateIndex = events.findIndex((event) => event.method === 'navigate');
+  const clearIndex = events.findIndex((event) => event.method === 'state' && event.value === null);
+  assert.ok(clearIndex > navigateIndex, 'Only blur after navigation clears setup');
+  assert.equal(stateWrites.filter((value) => value === null).length, 1);
+  assert.ok(stateWrites.includes(false), 'Blur releases the busy state');
+
+  emitBlur();
+  assert.equal(stateWrites.filter((value) => value === null).length, 1, 'Further blur events do not clear again');
 });
 
 test('a failed Start stays on the current page and can be retried', async () => {
@@ -110,6 +175,10 @@ test('a failed Start stays on the current page and can be retried', async () => 
 
   await welcome.startGame();
   assert.deepEqual(navigationCalls, []);
+  assert.ok(!stateWrites.includes(null), 'An unsuccessful save keeps setup open');
+  assert.ok(stateWrites.includes(false), 'An unsuccessful save releases the busy state');
+  emitBlur();
+  assert.ok(!stateWrites.includes(null), 'Blur without successful navigation does not clear setup');
 
   await welcome.startGame();
   assert.equal(navigationCalls.length, 1);

@@ -28,6 +28,7 @@ function loadUi() {
     if (request === 'expo-router') {
       return {
         router: { dismissTo() {}, navigate() {} },
+        useNavigation: () => ({ addListener: () => () => {} }),
         useFocusEffect() {},
       };
     }
