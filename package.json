@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@expo/ui": "~58.0.29",
+    "@shopify/react-native-skia": "2.14.0",
     "expo": "~58.0.26",
     "expo-constants": "~58.0.16",
     "expo-device": "~58.0.5",
@@ -20,8 +21,10 @@
     "expo-web-browser": "~58.1.0",
     "nativewind": "4.2.7",
     "react": "19.3.0",
+    "react-confetti": "^6.4.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.1",
+    "react-native-fast-confetti": "^2.0.2",
     "react-native-gesture-handler": "~3.3.0",
     "react-native-reanimated": "4.7.1",
     "react-native-safe-area-context": "~5.11.1",

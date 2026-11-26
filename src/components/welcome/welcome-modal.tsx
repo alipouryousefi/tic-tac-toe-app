@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
-import { useReducedMotion } from 'react-native-reanimated';
+import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CloseIcon } from '@/components/close-icon';
+import { ScreenModal } from '@/components/screen-modal';
 import { gameHistoryCopy } from '@/constants/game-history.constants';
 import { startGameCopy, welcomeModalLayout } from '@/constants/welcome.constants';
 import { useGameHistory } from '@/hooks/game-history-provider';
@@ -22,15 +22,13 @@ export function WelcomeModal({
   onChange,
   onClose,
   onStart,
-  onDismiss,
 }: WelcomeModalProps) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const reducedMotion = useReducedMotion();
   const { games } = useGameHistory();
   const [displayedModal, setDisplayedModal] = useState(modal ?? 'history');
 
-  // Keep the current content visible until the dismissal fade finishes.
+  // Keep the selected dialog content stable during its exit animation.
   if (modal !== null && modal !== displayedModal) {
     setDisplayedModal(modal);
   }
@@ -95,15 +93,9 @@ export function WelcomeModal({
   );
 
   return (
-    <Modal
+    <ScreenModal
       visible={modal !== null}
-      transparent
-      animationType={reducedMotion ? 'none' : 'fade'}
-      presentationStyle="overFullScreen"
-      statusBarTranslucent
-      navigationBarTranslucent
-      onRequestClose={onClose}
-      onDismiss={onDismiss}>
+      onRequestClose={onClose}>
       <View
         className="flex-1 items-center justify-center"
         style={{
@@ -141,6 +133,6 @@ export function WelcomeModal({
           )}
         </View>
       </View>
-    </Modal>
+    </ScreenModal>
   );
 }

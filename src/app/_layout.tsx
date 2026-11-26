@@ -41,6 +41,7 @@ export default function RootLayout() {
                 animation: reducedMotion
                   ? gamePageAnimations.reducedMotion
                   : gamePageAnimations.standard,
+                animationDuration: gamePageAnimations.duration,
                 animationMatchesGesture: true,
               }}
             />

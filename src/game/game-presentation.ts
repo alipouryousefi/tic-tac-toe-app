@@ -12,14 +12,14 @@ export function getGameResult(session: GameSession): GameResultDetails | null {
   }
 
   if (outcome.status === 'draw') {
-    return { kind: 'draw', title: gameUiCopy.draw };
+    return { sessionId: session.id, kind: 'draw', title: gameUiCopy.draw };
   }
 
   if (session.setup.mode === 'friend') {
-    return { kind: 'win', title: `${outcome.winner} wins!` };
+    return { sessionId: session.id, kind: 'win', title: `${outcome.winner} wins!` };
   }
 
   return outcome.winner === session.setup.mark
-    ? { kind: 'win', title: gameUiCopy.youWon }
-    : { kind: 'loss', title: gameUiCopy.youLost };
+    ? { sessionId: session.id, kind: 'win', title: gameUiCopy.youWon }
+    : { sessionId: session.id, kind: 'loss', title: gameUiCopy.youLost };
 }

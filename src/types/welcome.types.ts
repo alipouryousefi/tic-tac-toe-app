@@ -36,7 +36,6 @@ export type WelcomeModalProps = {
   onChange: (setup: MatchSetup) => void;
   onClose: () => void;
   onStart: () => void;
-  onDismiss: () => void;
 };
 
 export type MatchSetupFormProps = Pick<WelcomeModalProps, 'draft' | 'onChange' | 'busy'>;

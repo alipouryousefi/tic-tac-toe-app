@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useGameSession } from '@/hooks/game-session-provider';
 
@@ -9,24 +9,10 @@ export function useGameMenu() {
   const [isRestarting, setIsRestarting] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const restarting = useRef(false);
-  const pendingHome = useRef(false);
-
-  const finishGoingHome = useCallback(() => {
-    if (pendingHome.current) {
-      pendingHome.current = false;
-      router.dismissTo('/');
-    }
-  }, []);
-
-  useEffect(() => {
-    // iOS finishes navigation after the native modal has dismissed.
-    if (process.env.EXPO_OS !== 'ios' && !isOpen) {
-      finishGoingHome();
-    }
-  }, [isOpen, isLeaving, finishGoingHome]);
+  const navigating = useRef(false);
 
   function open() {
-    if (!isSaving && !restarting.current && !pendingHome.current) {
+    if (!isSaving && !restarting.current && !navigating.current) {
       setIsOpen(true);
     }
   }
@@ -38,17 +24,18 @@ export function useGameMenu() {
   }
 
   function goHome() {
-    if (isSaving || restarting.current || pendingHome.current) {
+    if (isSaving || restarting.current || navigating.current) {
       return;
     }
 
-    pendingHome.current = true;
+    navigating.current = true;
     setIsLeaving(true);
     setIsOpen(false);
+    router.dismissTo('/');
   }
 
   async function restart() {
-    if (isLoading || isSaving || restarting.current || pendingHome.current) {
+    if (isLoading || isSaving || restarting.current || navigating.current) {
       return;
     }
 
@@ -73,6 +60,5 @@ export function useGameMenu() {
     close,
     goHome,
     restart,
-    onDismiss: finishGoingHome,
   };
 }

@@ -23,7 +23,6 @@ export function WelcomeScreen() {
     closeModal,
     updateDraft,
     startGame,
-    onModalDismiss,
     canResume,
     resumeDescription,
     resumeGame,
@@ -38,6 +37,8 @@ export function WelcomeScreen() {
     <View className="flex-1 bg-canvas">
       <ScrollView
         className="flex-1"
+        accessibilityElementsHidden={modal !== null}
+        importantForAccessibility={modal !== null ? 'no-hide-descendants' : 'auto'}
         contentContainerClassName="grow"
         contentInsetAdjustmentBehavior="never"
         showsVerticalScrollIndicator={false}
@@ -158,7 +159,6 @@ export function WelcomeScreen() {
         onChange={updateDraft}
         onClose={closeModal}
         onStart={startGame}
-        onDismiss={onModalDismiss}
       />
     </View>
   );

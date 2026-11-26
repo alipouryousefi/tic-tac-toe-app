@@ -1,10 +1,11 @@
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useReducedMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CloseIcon } from '@/components/close-icon';
+import { ScreenModal } from '@/components/screen-modal';
 import { WelcomeText } from '@/components/welcome/welcome-text';
 import {
   gameMenuActionIcons,
@@ -17,6 +18,7 @@ import { useTheme } from '@/hooks/use-theme';
 import type { GameMenuModalProps } from '@/types/game-ui.types';
 
 import { GameResultContent } from './game-result-content';
+import { WinConfetti } from './win-confetti';
 
 export function GameMenuModal({
   visible,
@@ -26,7 +28,6 @@ export function GameMenuModal({
   error,
   result = null,
   onClose,
-  onDismiss,
   onHome,
   onRestart,
 }: GameMenuModalProps) {
@@ -55,15 +56,9 @@ export function GameMenuModal({
   );
 
   return (
-    <Modal
+    <ScreenModal
       visible={visible}
-      transparent
-      animationType={reducedMotion ? 'none' : 'fade'}
-      presentationStyle="overFullScreen"
-      statusBarTranslucent
-      navigationBarTranslucent
-      onRequestClose={dismiss}
-      onDismiss={onDismiss}>
+      onRequestClose={dismiss}>
       <View
         className="flex-1 items-center justify-center"
         style={{
@@ -195,7 +190,10 @@ export function GameMenuModal({
             )}
           </ScrollView>
         </View>
+        {visible && result?.kind === 'win' && !reducedMotion && (
+          <WinConfetti key={result.sessionId} playing />
+        )}
       </View>
-    </Modal>
+    </ScreenModal>
   );
 }

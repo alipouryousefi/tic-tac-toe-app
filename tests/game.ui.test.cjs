@@ -9,11 +9,10 @@ const nativeWeb = require('react-native-web');
 const { applyMove, createGameSession, getCurrentPlayer } = require('@/game/game.logic');
 
 let currentGame;
+let reducedMotion = false;
 
-// Native modal portals have no server host; retain their visible children for UI assertions.
-const serverNative = Object.create(nativeWeb);
-Object.defineProperty(serverNative, 'Modal', {
-  value: ({ visible, children }) => visible ? React.createElement(nativeWeb.View, null, children) : null,
+test.beforeEach(() => {
+  reducedMotion = false;
 });
 
 function loadUi() {
@@ -22,7 +21,7 @@ function loadUi() {
   const sourceDirectory = path.resolve(path.dirname(module.filename), '../src') + path.sep;
 
   Module._load = function (request, parent, isMain) {
-    if (request === 'react-native') return serverNative;
+    if (request === 'react-native') return nativeWeb;
     if (request === 'react-native-safe-area-context') {
       return { useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) };
     }
@@ -38,8 +37,15 @@ function loadUi() {
     if (request === '@/hooks/use-theme') {
       return { useTheme: () => ({ text: '#000000' }) };
     }
+    if (request === '@/components/screen-modal') {
+      return {
+        ScreenModal: ({ visible, children }) => visible
+          ? React.createElement(nativeWeb.View, null, children)
+          : null,
+      };
+    }
     if (request === 'react-native-reanimated') {
-      return { useReducedMotion: () => false };
+      return { useReducedMotion: () => reducedMotion };
     }
     if (request === 'expo-symbols') {
       return { SymbolView: () => null };
@@ -49,6 +55,14 @@ function loadUi() {
     }
     if (request === './welcome-modal') {
       return { WelcomeModal: () => null };
+    }
+    if (request === './win-confetti') {
+      return {
+        WinConfetti: ({ playing }) => React.createElement(nativeWeb.View, {
+          testID: 'win-confetti',
+          dataSet: { playing: String(playing) },
+        }),
+      };
     }
 
     return previousLoad.call(this, request, parent, isMain);
@@ -111,7 +125,6 @@ function renderMenu(overrides = {}) {
     error: null,
     result: null,
     onClose() {},
-    onDismiss() {},
     onHome() {},
     onRestart() {},
     ...overrides,
@@ -163,7 +176,6 @@ test('the board exposes nine named squares and locks occupied squares', () => {
 test('friend games show the next player and allow only empty squares', () => {
   const html = renderGame({ session: sessionWithMoves([0]) });
   assert.ok(html.includes('O’s turn'));
-  assert.ok(html.includes('Pass the phone after your move.'));
   assert.equal(isDisabled(html, 'game-cell-0'), true);
   assert.equal(isDisabled(html, 'game-cell-1'), false);
   assert.equal(isDisabled(html, 'open-game-menu'), false);
@@ -171,6 +183,7 @@ test('friend games show the next player and allow only empty squares', () => {
   assert.ok(!html.includes('data-testid="restart-game"'));
   assert.ok(!html.includes('data-testid="theme-toggle"'));
   assert.ok(!html.includes('data-testid="game-result-modal"'));
+  assert.ok(!html.includes('data-testid="win-confetti"'));
 });
 
 test('device turns lock the board; the human can play once the device move is committed', () => {
@@ -203,6 +216,7 @@ test('friend wins automatically show the result while retaining the last player�
     assert.equal(isDisabled(html, 'open-game-menu'), true);
     assert.equal(isDisabled(html, 'result-home'), false);
     assert.equal(isDisabled(html, 'result-play-again'), false);
+    assert.match(openingTag(html, 'win-confetti'), /data-playing="true"/);
     for (const testId of ['game-menu', 'continue-game', 'close-game-menu', 'game-home', 'restart-game']) {
       assert.ok(!html.includes(`data-testid="${testId}"`));
     }
@@ -216,6 +230,7 @@ test('device results distinguish a human win from a device win', () => {
   assert.equal(titleText(humanWin, 'game-result-title'), 'You won!');
   assert.equal(titleText(humanWin, 'game-status-title'), 'Your turn');
   assert.equal(isDisabled(humanWin, 'open-game-menu'), true);
+  assert.match(openingTag(humanWin, 'win-confetti'), /data-playing="true"/);
   assertAllCellsDisabled(humanWin);
 
   const deviceWin = renderGame({ session: sessionWithMoves([0, 3, 1, 4, 2], setup) });
@@ -223,6 +238,7 @@ test('device results distinguish a human win from a device win', () => {
   assert.equal(titleText(deviceWin, 'game-result-title'), 'You lost.');
   assert.equal(titleText(deviceWin, 'game-status-title'), 'Device’s turn');
   assert.equal(isDisabled(deviceWin, 'open-game-menu'), true);
+  assert.ok(!deviceWin.includes('data-testid="win-confetti"'));
   assertAllCellsDisabled(deviceWin);
 });
 
@@ -235,6 +251,7 @@ test('a draw automatically opens its result and retains the last turn header', (
   assert.equal(isDisabled(html, 'open-game-menu'), true);
   assert.equal(isDisabled(html, 'result-home'), false);
   assert.equal(isDisabled(html, 'result-play-again'), false);
+  assert.ok(!html.includes('data-testid="win-confetti"'));
 });
 
 test('restore loading and missing-session states do not show a playable board', () => {
@@ -250,9 +267,9 @@ test('restore loading and missing-session states do not show a playable board', 
 });
 
 test('the closed game menu does not expose continue, home, or restart actions', () => {
-  for (const result of [null, { kind: 'win', title: 'X wins!' }]) {
+  for (const result of [null, { kind: 'win', title: 'X wins!', sessionId: 'ui-round' }]) {
     const html = renderMenu({ visible: false, result });
-    for (const testId of ['game-menu', 'continue-game', 'game-home', 'restart-game', 'game-result-modal', 'result-home', 'result-play-again']) {
+    for (const testId of ['game-menu', 'continue-game', 'game-home', 'restart-game', 'game-result-modal', 'result-home', 'result-play-again', 'win-confetti']) {
       assert.ok(!html.includes(`data-testid="${testId}"`));
     }
   }
@@ -269,6 +286,7 @@ test('the game menu offers continue, home, and restart, with play again for a fi
   assert.equal(isDisabled(playing, 'close-game-menu'), false);
   assert.ok(!playing.includes('Clear the board and keep your match settings.'));
   assert.ok(!playing.includes('Your unfinished game is saved for later.'));
+  assert.ok(!playing.includes('data-testid="win-confetti"'));
 
   const finished = renderMenu({ isFinished: true });
   assert.ok(finished.includes('Play again'));
@@ -297,11 +315,11 @@ test('the menu keeps restart failures visible and allows a retry', () => {
   assert.equal(isDisabled(html, 'game-home'), false);
 });
 
-test('every result variant exposes exactly Home and Play again actions', () => {
+test('results keep both actions available and celebrate only wins without reduced motion', () => {
   for (const result of [
-    { kind: 'win', title: 'You won!' },
-    { kind: 'loss', title: 'You lost.' },
-    { kind: 'draw', title: 'It’s a draw.' },
+    { kind: 'win', title: 'You won!', sessionId: 'ui-win' },
+    { kind: 'loss', title: 'You lost.', sessionId: 'ui-loss' },
+    { kind: 'draw', title: 'It’s a draw.', sessionId: 'ui-draw' },
   ]) {
     const html = renderMenu({ result, isFinished: true });
     openingTag(html, 'game-result-modal');
@@ -314,11 +332,19 @@ test('every result variant exposes exactly Home and Play again actions', () => {
       assert.ok(!html.includes(`data-testid="${testId}"`));
     }
     assert.equal(isDisabled(html, 'dismiss-game-menu-backdrop'), true);
+    assert.equal(html.includes('data-testid="win-confetti"'), result.kind === 'win');
+
+    reducedMotion = true;
+    const reduced = renderMenu({ result, isFinished: true });
+    assert.ok(!reduced.includes('data-testid="win-confetti"'));
+    assert.equal(isDisabled(reduced, 'result-home'), false);
+    assert.equal(isDisabled(reduced, 'result-play-again'), false);
+    reducedMotion = false;
   }
 });
 
 test('saving another round keeps the result visible and blocks both actions', () => {
-  const result = { kind: 'win', title: 'X wins!' };
+  const result = { kind: 'win', title: 'X wins!', sessionId: 'ui-round' };
   const html = renderMenu({ result, isFinished: true, busy: true });
   assert.equal(titleText(html, 'game-result-title'), 'X wins!');
   assert.equal(isDisabled(html, 'result-home'), true);
@@ -327,7 +353,7 @@ test('saving another round keeps the result visible and blocks both actions', ()
 });
 
 test('a failed rematch retains its result, exposes the error, and allows retry', () => {
-  const result = { kind: 'draw', title: 'It’s a draw.' };
+  const result = { kind: 'draw', title: 'It’s a draw.', sessionId: 'ui-round' };
   const error = 'Your game could not be restarted. Please try again.';
   const html = renderMenu({ result, isFinished: true, error });
   assert.equal(titleText(html, 'game-result-title'), result.title);

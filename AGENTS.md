@@ -13,6 +13,7 @@
 - `src/constants/`: static app data, default settings, labels, styling lookups, theme values, and font definitions.
 - `src/components/`: shared themed UI; `src/hooks/`: theme, history, and saved-session providers; `assets/fonts/`: local fonts; `assets/branding/`: game icon and splash artwork.
 - Use Expo Router for navigation; import `Link`, `router`, and `useLocalSearchParams` from `expo-router`. Docs: https://docs.expo.dev/router/introduction.md
+- Use the shared `ScreenModal` for centered dialogs. Native dialogs stay within their screen so navigation can start directly; the web variant preserves browser focus handling. Do not queue navigation behind a native modal dismissal.
 - Use the existing aliases: `@/*` maps to `src/*`, and `@/assets/*` maps to `assets/*`.
 - Follow nearby code: kebab-case filenames, two-space indentation, single quotes, semicolons, and separate external/local import groups. Prefer clear names, small functions, immutable updates, and straightforward control flow. Reuse existing components and helpers where they fit.
 

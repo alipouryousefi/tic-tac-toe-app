@@ -209,7 +209,6 @@ export function GamePage() {
         error={error}
         result={result}
         onClose={menu.close}
-        onDismiss={menu.onDismiss}
         onHome={menu.goHome}
         onRestart={() => { void menu.restart(); }}
       />

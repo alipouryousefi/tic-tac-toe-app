@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { gameHistoryCopy } from '@/constants/game-history.constants';
 import { defaultMatchSetup } from '@/constants/welcome.constants';
@@ -13,7 +13,7 @@ export function useWelcome() {
   const [selectedMode, setSelectedMode] = useState<PlayMode>(defaultMatchSetup.mode);
   const [draft, setDraft] = useState<MatchSetup>({ ...defaultMatchSetup });
   const [modal, setModal] = useState<WelcomeModalKind>(null);
-  const pendingGame = useRef<MatchSetup | null>(null);
+  const navigating = useRef(false);
   const starting = useRef(false);
   const [isStarting, setIsStarting] = useState(false);
   const canResume = !!session && getGameOutcome(session.board).status === 'playing';
@@ -21,36 +21,19 @@ export function useWelcome() {
     ? `${gameHistoryCopy.opponents[session.setup.mode]} · ${getCurrentPlayer(session.board)} to play`
     : null;
 
-  const openGame = useCallback(() => {
-    const setup = pendingGame.current;
-
-    if (!setup) {
-      return;
-    }
-
-    pendingGame.current = null;
-    router.navigate({ pathname: '/game', params: { ...setup } });
-  }, []);
-
-  useEffect(() => {
-    // iOS waits for the native modal dismissal callback before navigation.
-    if (process.env.EXPO_OS !== 'ios' && modal === null) {
-      openGame();
-    }
-  }, [modal, openGame]);
-
   function openSetup() {
     if (isLoading || isSaving || starting.current) {
       return;
     }
 
     const nextSetup = savedSetup ?? session?.setup ?? defaultMatchSetup;
+    navigating.current = false;
     setDraft({ ...nextSetup, mode: selectedMode });
     setModal('setup');
   }
 
   async function startGame() {
-    if (modal !== 'setup' || pendingGame.current || starting.current) {
+    if (modal !== 'setup' || navigating.current || starting.current) {
       return;
     }
 
@@ -62,10 +45,11 @@ export function useWelcome() {
       const created = await startSession(setup);
 
       if (created) {
-        pendingGame.current = setup;
+        navigating.current = true;
         setSavedSetup(setup);
         setSelectedMode(setup.mode);
         setModal(null);
+        router.navigate({ pathname: '/game', params: { ...setup } });
       }
     } finally {
       starting.current = false;
@@ -108,6 +92,5 @@ export function useWelcome() {
       if (!starting.current) setDraft(setup);
     },
     startGame,
-    onModalDismiss: openGame,
   };
 }

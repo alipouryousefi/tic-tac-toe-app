@@ -3,8 +3,13 @@ import type { PlayerMark } from '@/types/welcome.types';
 export type GameResultKind = 'win' | 'loss' | 'draw';
 
 export type GameResultDetails = {
+  sessionId: string;
   kind: GameResultKind;
   title: string;
+};
+
+export type WinConfettiProps = {
+  playing: boolean;
 };
 
 export type GameBoardProps = {
@@ -23,7 +28,6 @@ export type GameMenuModalProps = {
   error: string | null;
   result?: GameResultDetails | null;
   onClose: () => void;
-  onDismiss: () => void;
   onHome: () => void;
   onRestart: () => void;
 };
